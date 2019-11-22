@@ -18,7 +18,7 @@ struct LatticeMesh : public AnimatedMesh<T, 4>
     T m_gridDX;
     int m_nFrames;
     
-    void setLatticeValues(float inputLattice[LatticeSize][LatticeSize]) {
+    void setLatticeValues(T inputLattice[][LatticeSize]) {
         for(int i = 0; i < LatticeSize; i++) {
             for(int j = 0; j < LatticeSize; j++) {
                 m_latticeValues[i][j] = inputLattice[i][j];
@@ -26,9 +26,9 @@ struct LatticeMesh : public AnimatedMesh<T, 4>
         }
     }
     
-    void initialize(float inputLattice[LatticeSize][LatticeSize])
+    void initialize(T inputLattice[][LatticeSize], std::string nameOfUSDFile)
     {
-        initializeUSD("ConjugateGradient.usda");
+        initializeUSD(nameOfUSDFile);
         
         // Create a Cartesian lattice topology
         for(int cell_i = 0; cell_i < m_cellSize[0]; cell_i++) {
@@ -59,15 +59,15 @@ struct LatticeMesh : public AnimatedMesh<T, 4>
     }
     
     void setFrame() {
-        for(int node_i = 1; node_i <= m_cellSize[0]; node_i++) {
-            for(int node_j = 1; node_j <= m_cellSize[1]; node_j++) {
+        for(int node_i = 0; node_i <= m_cellSize[0]; node_i++) {
+            for(int node_j = 0; node_j <= m_cellSize[1]; node_j++) {
                 m_particleX[gridToParticleID(node_i  ,node_j)] = GfVec3f((T)node_i*m_gridDX, (T)node_j*m_gridDX, (T)m_latticeValues[node_i][node_j]);
-                std::cout << "(" << node_i << "," << node_j << "): " << (T)m_latticeValues[node_i][node_j] << std::endl;
+//                std::cout << "(" << node_i << "," << node_j << "): " << (T)m_latticeValues[node_i][node_j] << std::endl;
             }
         }
     }
     
-    void regFrame(float inputLattice[LatticeSize][LatticeSize]) {
+    void regFrame(T inputLattice[][LatticeSize]) {
         static int frameNo = 1;
         setLatticeValues(inputLattice);
         setFrame();
